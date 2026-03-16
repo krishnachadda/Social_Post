@@ -34,7 +34,7 @@ with app.app_context():
 def home():
     if current_user.is_authenticated:
         return redirect(url_for("dashboard", user_id=current_user.id))
-    return redirect(url_for("/register"))
+    return redirect(url_for("register"))
 
 
 @app.route("/register", methods=["GET", "POST"])
