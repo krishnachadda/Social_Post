@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, session, url_for
+from flask import Flask, abort, flash, render_template, request, redirect, session, url_for
 from flask_login import LoginManager, current_user, login_required, login_user, logout_user
 from model.users import Users
 from model.users import db
@@ -72,7 +72,7 @@ def login():
 @app.route("/dashboard/<int:user_id>")
 @login_required
 def dashboard(user_id):
-    return render_template("dashboard.html", user_id=user_id, current_user=current_user.username)
+    return render_template("dashboard.html", user_id=user_id)
 
 
 @app.route("/logout", methods=["POST"])
@@ -96,17 +96,22 @@ def delete_account(user_id):
 @app.route("/update_email/<int:user_id>", methods=["POST", "GET"])
 @login_required
 def update_email(user_id):
-    if request.method == "POST":
-        new_email = request.form.get("new_email")
-        print(f"New Email is {new_email}")
-        user = Users.query.get(user_id)
-        if user:
-            user.email = new_email
-            db.session.commit()
-            return redirect(url_for("dashboard", user_id=user_id))
     user = Users.query.get(user_id)
-    if user:
-        return render_template("update_email.html", user=user)
+    if not user:
+        abort(404)
+
+    if request.method == "POST":
+        new_email = request.form.get("new_email", "").strip()
+        if not new_email:
+            flash("Please provide a new email address.", "warning")
+            return render_template("update_email.html", user=user), 400
+
+        user.email = new_email
+        db.session.commit()
+        flash("Email updated successfully.", "success")
+        return redirect(url_for("dashboard", user_id=user_id))
+
+    return render_template("update_email.html", user=user)
 
 
 @app.route("/fetch_all")

@@ -1,0 +1,421 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<meta charset="UTF-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0">
+	<meta name="description" content="Social Post account dashboard and user management">
+	<title>{% block title %}Social Post{% endblock %}</title>
+
+	<link rel="preconnect" href="https://fonts.googleapis.com">
+	<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+	<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:wght@500;700;800&family=Space+Grotesk:wght@400;500;600;700&display=swap"
+		rel="stylesheet">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-QWTKZyjpPEjISv5WaRU9OFeRpok6YctnYmDr5pNlyT2bRjXh0JMhjY6hW+ALEwIH" crossorigin="anonymous">
+
+	<style>
+		:root {
+			--page-bg-a: #f4f7ee;
+			--page-bg-b: #e7efe7;
+			--shape-a: #f7be5f;
+			--shape-b: #70c4bb;
+			--ink-strong: #1f2a2e;
+			--ink-soft: #4f6066;
+			--card-bg: rgba(255, 255, 255, 0.82);
+			--card-border: rgba(255, 255, 255, 0.65);
+			--accent: #205781;
+			--accent-strong: #173d5a;
+			--accent-contrast: #ffffff;
+			--shadow-soft: 0 14px 34px rgba(30, 50, 60, 0.12);
+			--shadow-hover: 0 20px 45px rgba(30, 50, 60, 0.2);
+			--radius-xl: 22px;
+			--radius-lg: 16px;
+			--radius-md: 12px;
+		}
+
+		html,
+		body {
+			min-height: 100%;
+		}
+
+		body {
+			margin: 0;
+			color: var(--ink-strong);
+			font-family: "Space Grotesk", "Segoe UI", sans-serif;
+			background:
+				radial-gradient(circle at 18% 14%, rgba(247, 190, 95, 0.25), transparent 34%),
+				radial-gradient(circle at 82% 10%, rgba(112, 196, 187, 0.3), transparent 30%),
+				linear-gradient(160deg, var(--page-bg-a), var(--page-bg-b));
+			position: relative;
+			overflow-x: hidden;
+		}
+
+		body::before,
+		body::after {
+			content: "";
+			position: fixed;
+			border-radius: 999px;
+			filter: blur(0.5px);
+			z-index: -1;
+			animation: float-shape 14s ease-in-out infinite;
+		}
+
+		body::before {
+			width: 280px;
+			height: 280px;
+			right: -90px;
+			top: 110px;
+			background: linear-gradient(145deg, rgba(247, 190, 95, 0.4), rgba(247, 190, 95, 0.12));
+		}
+
+		body::after {
+			width: 320px;
+			height: 320px;
+			left: -120px;
+			bottom: 50px;
+			background: linear-gradient(145deg, rgba(112, 196, 187, 0.3), rgba(112, 196, 187, 0.08));
+			animation-delay: 2s;
+		}
+
+		.site-shell {
+			width: min(1120px, calc(100% - 2rem));
+			margin: 0 auto;
+		}
+
+		.site-header {
+			padding: 1rem 0 0.75rem;
+			position: sticky;
+			top: 0;
+			z-index: 1000;
+			backdrop-filter: blur(8px);
+		}
+
+		.main-nav {
+			border: 1px solid var(--card-border);
+			border-radius: var(--radius-xl);
+			background: var(--card-bg);
+			box-shadow: var(--shadow-soft);
+			padding: 0.65rem 1rem;
+		}
+
+		.navbar-brand {
+			font-family: "Bricolage Grotesque", "Segoe UI", sans-serif;
+			font-size: 1.32rem;
+			font-weight: 700;
+			display: inline-flex;
+			align-items: center;
+			gap: 0.5rem;
+			color: var(--ink-strong);
+			letter-spacing: 0.2px;
+		}
+
+		.brand-dot {
+			width: 12px;
+			height: 12px;
+			border-radius: 50%;
+			background: linear-gradient(145deg, var(--shape-a), var(--shape-b));
+			box-shadow: 0 0 0 4px rgba(255, 255, 255, 0.9);
+		}
+
+		.main-nav .nav-link {
+			color: var(--ink-soft);
+			font-weight: 600;
+			border-radius: 999px;
+			padding: 0.4rem 0.85rem;
+			transition: all 0.2s ease;
+		}
+
+		.main-nav .navbar-toggler {
+			border: 1px solid rgba(31, 42, 46, 0.2);
+		}
+
+		.main-nav .navbar-toggler:focus {
+			box-shadow: none;
+			border-color: rgba(32, 87, 129, 0.45);
+		}
+
+		.main-nav .navbar-toggler-icon {
+			background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 30 30'%3e%3cpath stroke='rgba(31,42,46,0.85)' stroke-linecap='round' stroke-miterlimit='10' stroke-width='2' d='M4 7h22M4 15h22M4 23h22'/%3e%3c/svg%3e");
+		}
+
+		.main-nav .nav-link:hover,
+		.main-nav .nav-link:focus {
+			background: rgba(32, 87, 129, 0.1);
+			color: var(--accent-strong);
+		}
+
+		.chip-user {
+			display: inline-flex;
+			align-items: center;
+			border: 1px solid rgba(32, 87, 129, 0.2);
+			background: rgba(255, 255, 255, 0.84);
+			color: var(--accent-strong);
+			border-radius: 999px;
+			padding: 0.36rem 0.78rem;
+			font-size: 0.88rem;
+			font-weight: 700;
+		}
+
+		.btn-brand,
+		.btn-logout {
+			border-radius: 999px;
+			font-weight: 700;
+			padding-inline: 1rem;
+		}
+
+		.btn-brand {
+			background: linear-gradient(140deg, var(--accent), #2d7bb4);
+			border-color: transparent;
+			color: var(--accent-contrast);
+		}
+
+		.btn-brand:hover,
+		.btn-brand:focus {
+			background: linear-gradient(140deg, var(--accent-strong), var(--accent));
+			color: var(--accent-contrast);
+		}
+
+		.btn-logout {
+			border: 1px solid rgba(28, 61, 92, 0.2);
+			background: rgba(255, 255, 255, 0.84);
+			color: var(--ink-strong);
+		}
+
+		.btn-logout:hover,
+		.btn-logout:focus {
+			background: rgba(32, 87, 129, 0.08);
+			color: var(--accent-strong);
+		}
+
+		.hero-panel {
+			border: 1px solid var(--card-border);
+			border-radius: var(--radius-xl);
+			background: linear-gradient(155deg, rgba(255, 255, 255, 0.92), rgba(255, 255, 255, 0.64));
+			box-shadow: var(--shadow-soft);
+			padding: clamp(1.2rem, 2.2vw, 2rem);
+		}
+
+		.eyebrow {
+			margin: 0 0 0.35rem;
+			text-transform: uppercase;
+			letter-spacing: 0.08em;
+			color: var(--accent);
+			font-size: 0.75rem;
+			font-weight: 700;
+		}
+
+		.hero-title {
+			margin: 0;
+			font-family: "Bricolage Grotesque", "Segoe UI", sans-serif;
+			font-size: clamp(1.45rem, 2.7vw, 2.3rem);
+			line-height: 1.1;
+		}
+
+		.hero-subtitle {
+			margin: 0.65rem 0 0;
+			color: var(--ink-soft);
+			max-width: 65ch;
+		}
+
+		.alert {
+			border: none;
+			border-radius: var(--radius-md);
+			box-shadow: var(--shadow-soft);
+		}
+
+		.content-panel {
+			border: 1px solid var(--card-border);
+			border-radius: var(--radius-xl);
+			background: var(--card-bg);
+			box-shadow: var(--shadow-soft);
+			padding: clamp(1rem, 1.8vw, 1.6rem);
+			transition: transform 0.2s ease, box-shadow 0.2s ease;
+		}
+
+		.content-panel:hover {
+			transform: translateY(-1px);
+			box-shadow: var(--shadow-hover);
+		}
+
+		.page-enter {
+			animation: fade-up 0.55s ease;
+		}
+
+		.site-footer {
+			padding: 1.4rem 0 2.1rem;
+			color: var(--ink-soft);
+		}
+
+		.footer-inner {
+			display: flex;
+			justify-content: space-between;
+			gap: 0.6rem;
+			align-items: center;
+		}
+
+		@keyframes fade-up {
+			from {
+				opacity: 0;
+				transform: translateY(10px);
+			}
+
+			to {
+				opacity: 1;
+				transform: translateY(0);
+			}
+		}
+
+		@keyframes float-shape {
+			0%,
+			100% {
+				transform: translateY(0);
+			}
+
+			50% {
+				transform: translateY(-12px);
+			}
+		}
+
+		@media (max-width: 992px) {
+			.site-header {
+				padding-top: 0.75rem;
+			}
+
+			.main-nav {
+				border-radius: 14px;
+			}
+
+			.main-nav .navbar-collapse {
+				margin-top: 0.75rem;
+				padding-top: 0.75rem;
+				border-top: 1px solid rgba(28, 61, 92, 0.1);
+			}
+
+			.main-nav .navbar-nav {
+				margin-bottom: 0.8rem;
+			}
+
+			.footer-inner {
+				flex-direction: column;
+				align-items: flex-start;
+			}
+		}
+	</style>
+	{% block extra_head %}{% endblock %}
+</head>
+
+<body class="{% block body_class %}{% endblock %}">
+	{% set is_logged_in = false %}
+	{% set nav_user_id = none %}
+	{% set nav_username = "Member" %}
+	{% if current_user is defined and current_user.is_authenticated is defined and current_user.is_authenticated %}
+	{% set is_logged_in = true %}
+	{% set nav_user_id = current_user.id %}
+	{% set nav_username = current_user.username if current_user.username is defined else current_user|string %}
+	{% elif user_id is defined %}
+	{% set is_logged_in = true %}
+	{% set nav_user_id = user_id %}
+	{% if current_user is defined %}
+	{% set nav_username = current_user|string %}
+	{% endif %}
+	{% endif %}
+
+	<header class="site-header">
+		<nav class="navbar navbar-expand-lg main-nav site-shell">
+			<a class="navbar-brand" href="{{ url_for('home') }}">
+				<span class="brand-dot" aria-hidden="true"></span>
+				Social Post
+			</a>
+
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#mainNav"
+				aria-controls="mainNav" aria-expanded="false" aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="mainNav">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+					{% if is_logged_in and nav_user_id is not none %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('dashboard', user_id=nav_user_id) }}">Dashboard</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('fetch_all') }}">All Users</a>
+					</li>
+					{% else %}
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('login') }}">Login</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="{{ url_for('register') }}">Register</a>
+					</li>
+					{% endif %}
+				</ul>
+
+				<div class="d-flex align-items-center flex-wrap gap-2">
+					{% if is_logged_in %}
+					<span class="chip-user">{{ nav_username }}</span>
+					<form method="post" action="{{ url_for('logout') }}" class="m-0">
+						<button type="submit" class="btn btn-sm btn-logout">Logout</button>
+					</form>
+					{% else %}
+					<a class="btn btn-sm btn-brand" href="{{ url_for('login') }}">Sign In</a>
+					<a class="btn btn-sm btn-outline-secondary rounded-pill fw-semibold" href="{{ url_for('register') }}">Join</a>
+					{% endif %}
+				</div>
+			</div>
+		</nav>
+	</header>
+
+	<main class="site-shell page-enter py-3 py-lg-4">
+		{% block page_header %}
+		<section class="hero-panel mb-4">
+			<p class="eyebrow">Account Center</p>
+			<h1 class="hero-title">Social Post in one clean workspace</h1>
+			<p class="hero-subtitle">Manage account details, view users, and keep profile updates simple from a single place.</p>
+		</section>
+		{% endblock %}
+
+		{% with flashes = get_flashed_messages(with_categories=true) %}
+		{% if flashes or message or error %}
+		<section class="mb-4" aria-live="polite">
+			{% for category, text in flashes %}
+			<div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+				{{ text }}
+				<button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+			</div>
+			{% endfor %}
+
+			{% if message %}
+			<div class="alert alert-success" role="status">{{ message }}</div>
+			{% endif %}
+
+			{% if error %}
+			<div class="alert alert-danger" role="alert">{{ error }}</div>
+			{% endif %}
+		</section>
+		{% endif %}
+		{% endwith %}
+
+		<section class="content-panel">
+			{% block content %}
+			<p class="mb-0">Start adding content by overriding the <strong>content</strong> block in a child template.</p>
+			{% endblock %}
+		</section>
+	</main>
+
+	<footer class="site-footer">
+		<div class="site-shell footer-inner">
+			<p class="small mb-0">Built with Flask and Bootstrap.</p>
+			<p class="small mb-0">Social Post</p>
+		</div>
+	</footer>
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-YvpcrYf0tY3lHB60NNkmXc5s9fDVZLESaAA55NDzOxhy9GkcIdslK1eN7N6jIeHz"
+		crossorigin="anonymous"></script>
+	{% block extra_scripts %}{% endblock %}
+</body>
+
+</html>
